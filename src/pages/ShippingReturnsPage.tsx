@@ -33,8 +33,8 @@ export const ShippingReturnsPage: React.FC = () => {
             <div className="w-12 h-12 bg-forest/10 text-forest rounded-2xl flex items-center justify-center mx-auto mb-3">
               <Truck className="w-6 h-6" />
             </div>
-            <h3 className="font-serif font-bold text-base text-charcoal">Free Shipping Over $200</h3>
-            <p className="text-xs text-charcoal/70 mt-1">Automatic standard free shipping across the USA.</p>
+            <h3 className="font-serif font-bold text-base text-charcoal">Free Shipping Over ₹200</h3>
+            <p className="text-xs text-charcoal/70 mt-1">Automatic standard free shipping across India.</p>
           </div>
 
           <div className="bg-white p-6 rounded-3xl border border-stone-200 text-center shadow-xs">
@@ -78,17 +78,17 @@ export const ShippingReturnsPage: React.FC = () => {
                 <tr>
                   <td className="p-3.5 font-semibold">Standard Tracked</td>
                   <td className="p-3.5">3–5 Business Days</td>
-                  <td className="p-3.5 font-bold text-forest">Free on orders $200+ ($9.99 under $200)</td>
+                  <td className="p-3.5 font-bold text-forest">Free on orders ₹200+ (₹49 under ₹200)</td>
                 </tr>
                 <tr>
                   <td className="p-3.5 font-semibold">Express Priority</td>
                   <td className="p-3.5">2–3 Business Days</td>
-                  <td className="p-3.5 font-semibold">$19.99</td>
+                  <td className="p-3.5 font-semibold">₹149</td>
                 </tr>
                 <tr>
                   <td className="p-3.5 font-semibold">Overnight Air</td>
                   <td className="p-3.5">1 Business Day</td>
-                  <td className="p-3.5 font-semibold">$34.99</td>
+                  <td className="p-3.5 font-semibold">₹299</td>
                 </tr>
               </tbody>
             </table>

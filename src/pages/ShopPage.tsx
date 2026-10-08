@@ -208,8 +208,8 @@ export default function ShopPage() {
             className="w-full"
           />
           <div className="flex justify-between text-xs text-text-secondary">
-            <span>${priceRange[0]}</span>
-            <span>${priceRange[1]}+</span>
+            <span>₹{priceRange[0]}</span>
+            <span>₹{priceRange[1]}+</span>
           </div>
         </div>
       </FilterSection>

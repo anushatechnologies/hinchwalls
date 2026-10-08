@@ -1,8 +1,12 @@
 import { X, Plus, Minus, ShoppingBag, Trash2, ArrowRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { useCartStore } from '../store/cartStore';
+import { useAuthStore } from '../store/authStore';
 
 export default function CartDrawer() {
+  const navigate = useNavigate();
+  const { user } = useAuthStore();
   const cartStore = useCartStore();
   const { items, isOpen, closeCart, removeItem, updateQuantity, getSubtotal, getShipping, getTotal, couponCode } = cartStore;
   const subtotal = getSubtotal();
@@ -10,6 +14,17 @@ export default function CartDrawer() {
   const freeShippingThreshold = 200;
   const progress = Math.min((subtotal / freeShippingThreshold) * 100, 100);
   const remaining = Math.max(freeShippingThreshold - subtotal, 0);
+
+  const handleCheckout = (e: React.MouseEvent) => {
+    e.preventDefault();
+    closeCart();
+    if (!user) {
+      toast.error('Please log in to proceed to checkout');
+      navigate('/login?redirect=/checkout', { state: { from: { pathname: '/checkout' } } });
+    } else {
+      navigate('/checkout');
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -38,7 +53,7 @@ export default function CartDrawer() {
         {remaining > 0 && (
           <div className="px-5 py-3 bg-beige/50 border-b border-border">
             <p className="text-xs text-text-secondary mb-1.5">
-              You're <strong className="text-terracotta">${remaining.toFixed(2)}</strong> away from free shipping!
+              You're <strong className="text-terracotta">₹{remaining.toFixed(2)}</strong> away from free shipping!
             </p>
             <div className="h-1.5 bg-border rounded-full overflow-hidden">
               <div
@@ -63,10 +78,10 @@ export default function CartDrawer() {
               </div>
               <div className="text-center">
                 <p className="font-semibold text-charcoal mb-1">Your cart is empty</p>
-                <p className="text-sm text-text-secondary">Add some beautiful wall art to get started!</p>
+                <p className="text-sm text-text-secondary">Add some beautiful items to get started!</p>
               </div>
               <button onClick={closeCart}>
-                <Link to="/shop" className="btn-primary">
+                <Link to="/category/all" className="btn-primary">
                   Browse Products
                 </Link>
               </button>
@@ -126,7 +141,7 @@ export default function CartDrawer() {
                       </div>
                       {/* Price */}
                       <span className="text-sm font-semibold text-charcoal">
-                        ${item.totalPrice.toFixed(2)}
+                        ₹{item.totalPrice.toFixed(2)}
                       </span>
                     </div>
                   </div>
@@ -149,7 +164,7 @@ export default function CartDrawer() {
             <div className="space-y-1.5">
               <div className="flex justify-between text-sm text-text-secondary">
                 <span>Subtotal</span>
-                <span>${subtotal.toFixed(2)}</span>
+                <span>₹{subtotal.toFixed(2)}</span>
               </div>
               {couponCode && (
                 <div className="flex justify-between text-sm text-forest">
@@ -159,21 +174,20 @@ export default function CartDrawer() {
               )}
               <div className="flex justify-between text-sm text-text-secondary">
                 <span>Shipping</span>
-                <span>{shipping === 0 ? <span className="text-forest font-medium">FREE</span> : `$${shipping.toFixed(2)}`}</span>
+                <span>{shipping === 0 ? <span className="text-forest font-medium">FREE</span> : `₹${shipping.toFixed(2)}`}</span>
               </div>
               <div className="flex justify-between font-semibold text-charcoal pt-1.5 border-t border-border">
                 <span>Total</span>
-                <span>${getTotal().toFixed(2)}</span>
+                <span>₹{getTotal().toFixed(2)}</span>
               </div>
             </div>
 
-            <Link
-              to="/checkout"
-              onClick={closeCart}
-              className="btn-primary w-full text-center flex items-center justify-center gap-2"
+            <button
+              onClick={handleCheckout}
+              className="btn-primary w-full text-center flex items-center justify-center gap-2 cursor-pointer"
             >
               Checkout <ArrowRight size={16} />
-            </Link>
+            </button>
             <Link
               to="/cart"
               onClick={closeCart}
@@ -187,3 +201,4 @@ export default function CartDrawer() {
     </div>
   );
 }
+

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   ShieldCheck,
@@ -41,20 +41,27 @@ export const CheckoutPage: React.FC = () => {
     useCartStore();
   const { user } = useAuthStore();
 
+  useEffect(() => {
+    if (!user) {
+      toast.error('Please log in to proceed to checkout');
+      navigate('/login?redirect=/checkout', { replace: true, state: { from: { pathname: '/checkout' } } });
+    }
+  }, [user, navigate]);
+
   const [step, setStep] = useState<'info' | 'shipping' | 'payment' | 'confirmation'>('info');
   const [isProcessing, setIsProcessing] = useState(false);
 
   // Form Fields
-  const [email, setEmail] = useState(user?.email || 'sarah.miller@example.com');
-  const [firstName, setFirstName] = useState(user?.firstName || 'Sarah');
-  const [lastName, setLastName] = useState(user?.lastName || 'Miller');
-  const [address, setAddress] = useState('742 Evergreen Terrace');
-  const [apartment, setApartment] = useState('Apt 4B');
-  const [city, setCity] = useState('Springfield');
-  const [state, setState] = useState('OR');
-  const [zipCode, setZipCode] = useState('97477');
-  const [country, setCountry] = useState('United States');
-  const [phone, setPhone] = useState('(555) 234-5678');
+  const [email, setEmail] = useState(user?.email || '');
+  const [firstName, setFirstName] = useState(user?.firstName || '');
+  const [lastName, setLastName] = useState(user?.lastName || '');
+  const [address, setAddress] = useState(user?.addresses?.[0]?.address1 || '');
+  const [apartment, setApartment] = useState(user?.addresses?.[0]?.address2 || '');
+  const [city, setCity] = useState(user?.addresses?.[0]?.city || '');
+  const [state, setState] = useState(user?.addresses?.[0]?.state || '');
+  const [zipCode, setZipCode] = useState(user?.addresses?.[0]?.zipCode || '');
+  const [country, setCountry] = useState('India');
+  const [phone, setPhone] = useState(user?.phone || '+91 83888 99999');
 
   // Shipping Method
   const [shippingMethod, setShippingMethod] = useState<'standard' | 'express' | 'overnight'>('standard');
@@ -64,7 +71,7 @@ export const CheckoutPage: React.FC = () => {
   const [cardNumber, setCardNumber] = useState('•••• •••• •••• 4242');
   const [cardExp, setCardExp] = useState('12/28');
   const [cardCvc, setCardCvc] = useState('123');
-  const [cardName, setCardName] = useState('Sarah Miller');
+  const [cardName, setCardName] = useState(user ? `${user.firstName} ${user.lastName}`.trim() : '');
 
   // Confirmation state
   const [confirmedOrder, setConfirmedOrder] = useState<any | null>(null);
@@ -72,7 +79,7 @@ export const CheckoutPage: React.FC = () => {
   const subtotal = getSubtotal();
   const baseShipping = getShipping();
   const shippingCost =
-    shippingMethod === 'express' ? 19.99 : shippingMethod === 'overnight' ? 34.99 : baseShipping;
+    shippingMethod === 'express' ? 149 : shippingMethod === 'overnight' ? 299 : baseShipping;
   const tax = getTax();
   const discountAmount = (subtotal * couponDiscount) / 100;
   const grandTotal = Math.max(0, subtotal - discountAmount + shippingCost + tax);
@@ -235,7 +242,7 @@ export const CheckoutPage: React.FC = () => {
             <div className="flex justify-between text-xs">
               <span className="text-charcoal/60">Total Paid:</span>
               <span className="font-serif font-bold text-base text-terracotta">
-                ${grandTotal.toFixed(2)}
+                ₹{grandTotal.toFixed(2)}
               </span>
             </div>
           </div>
@@ -499,7 +506,7 @@ export const CheckoutPage: React.FC = () => {
                         </div>
                       </div>
                       <div className="text-sm font-bold text-charcoal">
-                        {baseShipping === 0 ? 'FREE' : `$${baseShipping.toFixed(2)}`}
+                        {baseShipping === 0 ? 'FREE' : `₹${baseShipping.toFixed(2)}`}
                       </div>
                     </label>
 
@@ -527,7 +534,7 @@ export const CheckoutPage: React.FC = () => {
                           </div>
                         </div>
                       </div>
-                      <div className="text-sm font-bold text-charcoal">$19.99</div>
+                      <div className="text-sm font-bold text-charcoal">₹149.00</div>
                     </label>
 
                     <label
@@ -554,7 +561,7 @@ export const CheckoutPage: React.FC = () => {
                           </div>
                         </div>
                       </div>
-                      <div className="text-sm font-bold text-charcoal">$34.99</div>
+                      <div className="text-sm font-bold text-charcoal">₹299.00</div>
                     </label>
                   </div>
                 </div>
@@ -757,7 +764,7 @@ export const CheckoutPage: React.FC = () => {
                       )}
                     </div>
                     <div className="text-xs font-serif font-bold text-charcoal">
-                      ${item.totalPrice.toFixed(2)}
+                      ₹{item.totalPrice.toFixed(2)}
                     </div>
                   </div>
                 ))}
@@ -767,26 +774,26 @@ export const CheckoutPage: React.FC = () => {
               <div className="space-y-2.5 pt-4 border-t border-stone-200 text-xs text-charcoal/80">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
-                  <span className="font-semibold">${subtotal.toFixed(2)}</span>
+                  <span className="font-semibold">₹{subtotal.toFixed(2)}</span>
                 </div>
                 {discountAmount > 0 && (
                   <div className="flex justify-between text-forest font-semibold">
                     <span>Discount</span>
-                    <span>-${discountAmount.toFixed(2)}</span>
+                    <span>-₹{discountAmount.toFixed(2)}</span>
                   </div>
                 )}
                 <div className="flex justify-between">
                   <span>Shipping</span>
-                  <span>{shippingCost === 0 ? 'FREE' : `$${shippingCost.toFixed(2)}`}</span>
+                  <span>{shippingCost === 0 ? 'FREE' : `₹${shippingCost.toFixed(2)}`}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Estimated Tax</span>
-                  <span>${tax.toFixed(2)}</span>
+                  <span>₹{tax.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between items-baseline pt-3 border-t border-stone-200 text-charcoal font-bold">
                   <span className="text-sm">Total Due</span>
                   <span className="text-xl font-serif text-terracotta">
-                    ${grandTotal.toFixed(2)}
+                    ₹{grandTotal.toFixed(2)}
                   </span>
                 </div>
               </div>

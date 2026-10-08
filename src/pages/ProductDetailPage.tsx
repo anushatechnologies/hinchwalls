@@ -439,7 +439,7 @@ export const ProductDetailPage: React.FC = () => {
               </div>
               <div className="flex items-center gap-2 p-2 rounded-lg bg-stone-50">
                 <Truck className="w-4 h-4 text-terracotta flex-shrink-0" />
-                <span className="text-xs font-medium text-charcoal/90 leading-tight">Free US Shipping $200+</span>
+                <span className="text-xs font-medium text-charcoal/90 leading-tight">Free Shipping ₹200+</span>
               </div>
             </div>
           </div>
@@ -482,11 +482,11 @@ export const ProductDetailPage: React.FC = () => {
             {/* Pricing Section */}
             <div className="mt-4 flex items-baseline gap-3">
               <span className="text-3xl font-serif font-bold text-charcoal">
-                ${totalPrice}
+                ₹{totalPrice}
               </span>
               {product.originalPrice && (
                 <span className="text-lg text-charcoal/40 line-through">
-                  ${((product.originalPrice + (selectedSize?.priceModifier || 0)) * quantity).toFixed(2)}
+                  ₹{((product.originalPrice + (selectedSize?.priceModifier || 0)) * quantity).toFixed(2)}
                 </span>
               )}
               {product.isSale && (
@@ -497,8 +497,8 @@ export const ProductDetailPage: React.FC = () => {
             </div>
 
             <p className="text-xs text-charcoal/60 mt-1">
-              or 4 interest-free payments of ${(Number(totalPrice) / 4).toFixed(2)} with{' '}
-              <span className="font-semibold text-charcoal">Klarna</span> or <span className="font-semibold text-charcoal">Afterpay</span>
+              or 3 monthly interest-free payments of ₹{(Number(totalPrice) / 3).toFixed(2)} with{' '}
+              <span className="font-semibold text-charcoal">UPI</span> or <span className="font-semibold text-charcoal">Razorpay</span>
             </p>
 
             {/* Short Description */}
@@ -536,7 +536,7 @@ export const ProductDetailPage: React.FC = () => {
                           <div className="text-[11px] text-charcoal/60">{size.value}</div>
                           {size.priceModifier > 0 && (
                             <div className="text-[10px] text-terracotta font-medium mt-0.5">
-                              +${size.priceModifier.toFixed(2)}
+                              +₹{size.priceModifier.toFixed(2)}
                             </div>
                           )}
                           {isSelected && (
@@ -759,7 +759,7 @@ export const ProductDetailPage: React.FC = () => {
                 </button>
                 {openAccordion === 'shipping' && (
                   <div className="mt-3 text-sm text-charcoal/80 space-y-2 text-xs leading-relaxed">
-                    <p><strong>Standard US Shipping:</strong> 3-5 business days via USPS/FedEx. Free on orders over $200.</p>
+                    <p><strong>Standard Shipping:</strong> 3-5 business days. Free on orders over ₹200.</p>
                     <p><strong>30-Day Love It Guarantee:</strong> If you're not completely in love with your wall decals, return them within 30 days for a full replacement or refund.</p>
                   </div>
                 )}

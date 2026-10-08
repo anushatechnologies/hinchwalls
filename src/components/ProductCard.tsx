@@ -157,10 +157,10 @@ export default function ProductCard({ product, className = '', viewMode = 'grid'
 
         {/* Price */}
         <div className="flex items-center gap-2 mt-auto pt-2">
-          <span className="font-semibold text-charcoal text-sm">${product.price.toFixed(2)}</span>
+          <span className="font-semibold text-charcoal text-sm">₹{product.price.toFixed(2)}</span>
           {product.originalPrice && (
             <span className="text-xs text-text-light line-through">
-              ${product.originalPrice.toFixed(2)}
+              ₹{product.originalPrice.toFixed(2)}
             </span>
           )}
         </div>

@@ -9,7 +9,10 @@ export const LoginPage: React.FC = () => {
   useDocumentTitle('Sign In | WallArt');
   const navigate = useNavigate();
   const location = useLocation();
-  const from = (location.state as any)?.from?.pathname || '/account';
+  const searchParams = new URLSearchParams(location.search);
+  const redirectParam = searchParams.get('redirect');
+  const from = redirectParam || (location.state as any)?.from?.pathname || '/account';
+  const isCheckoutRedirect = from.includes('checkout');
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -36,11 +39,15 @@ export const LoginPage: React.FC = () => {
       <div className="max-w-md w-full bg-white rounded-3xl p-8 sm:p-10 border border-stone-200 shadow-sm">
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-terracotta/10 text-terracotta text-xs font-bold uppercase tracking-wider mb-3">
-            <Sparkles className="w-3.5 h-3.5" /> Welcome Back
+            <Sparkles className="w-3.5 h-3.5" /> {isCheckoutRedirect ? 'Checkout Login' : 'Welcome Back'}
           </div>
-          <h1 className="text-3xl font-serif font-bold text-charcoal">Sign In</h1>
+          <h1 className="text-3xl font-serif font-bold text-charcoal">
+            {isCheckoutRedirect ? 'Sign In to Checkout' : 'Sign In'}
+          </h1>
           <p className="text-xs text-charcoal/60 mt-1">
-            Access your orders, saved addresses, and wishlist.
+            {isCheckoutRedirect
+              ? 'Please log in to your account to review and complete your order.'
+              : 'Access your orders, saved addresses, and wishlist.'}
           </p>
         </div>
 
@@ -49,7 +56,12 @@ export const LoginPage: React.FC = () => {
           <CheckCircle2 className="w-4 h-4 text-forest flex-shrink-0 mt-0.5" />
           <div>
             <strong>Sign in with your HinchWall account.</strong> Don't have one?{' '}
-            <a href="/register" className="text-terracotta hover:underline font-semibold">Create a free account</a>.
+            <Link
+              to={isCheckoutRedirect ? `/register?redirect=${encodeURIComponent(from)}` : '/register'}
+              className="text-terracotta hover:underline font-semibold"
+            >
+              Create a free account
+            </Link>.
           </div>
         </div>
 
@@ -102,7 +114,10 @@ export const LoginPage: React.FC = () => {
 
         <div className="mt-8 pt-6 border-t border-stone-100 text-center text-xs text-charcoal/70">
           Don’t have an account yet?{' '}
-          <Link to="/register" className="font-semibold text-terracotta hover:underline">
+          <Link
+            to={isCheckoutRedirect ? `/register?redirect=${encodeURIComponent(from)}` : '/register'}
+            className="font-semibold text-terracotta hover:underline"
+          >
             Create an Account
           </Link>
         </div>

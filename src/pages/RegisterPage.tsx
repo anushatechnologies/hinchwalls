@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Mail, Lock, User, ArrowRight, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '../store/authStore';
@@ -8,6 +8,10 @@ import { useDocumentTitle } from '../hooks/useDocumentTitle';
 export const RegisterPage: React.FC = () => {
   useDocumentTitle('Create Account | WallArt');
   const navigate = useNavigate();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const redirectParam = searchParams.get('redirect');
+  const from = redirectParam || (location.state as any)?.from?.pathname || '/account';
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -29,7 +33,7 @@ export const RegisterPage: React.FC = () => {
     const ok = await register({ firstName, lastName, email, password });
     if (ok) {
       toast.success(`Welcome to WallArt, ${firstName}! 🎉`);
-      navigate('/account');
+      navigate(from, { replace: true });
     } else {
       toast.error('Registration failed. This email may already be in use.');
     }
@@ -118,7 +122,10 @@ export const RegisterPage: React.FC = () => {
 
         <div className="mt-8 pt-6 border-t border-stone-100 text-center text-xs text-charcoal/70">
           Already have an account?{' '}
-          <Link to="/login" className="font-semibold text-terracotta hover:underline">
+          <Link
+            to={from.includes('checkout') ? `/login?redirect=${encodeURIComponent(from)}` : '/login'}
+            className="font-semibold text-terracotta hover:underline"
+          >
             Sign In
           </Link>
         </div>

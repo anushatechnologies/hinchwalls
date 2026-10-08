@@ -15,12 +15,14 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useCartStore } from '../store/cartStore';
+import { useAuthStore } from '../store/authStore';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import Breadcrumb from '../components/Breadcrumb';
 
 export const CartPage: React.FC = () => {
   useDocumentTitle('Shopping Cart | WallArt');
   const navigate = useNavigate();
+  const { user } = useAuthStore();
 
   const {
     items,
@@ -36,6 +38,15 @@ export const CartPage: React.FC = () => {
     getTax,
     getTotal,
   } = useCartStore();
+
+  const handleProceedToCheckout = () => {
+    if (!user) {
+      toast.error('Please log in to proceed to checkout');
+      navigate('/login?redirect=/checkout', { state: { from: { pathname: '/checkout' } } });
+    } else {
+      navigate('/checkout');
+    }
+  };
 
   const [promoInput, setPromoInput] = useState('');
   const [orderNote, setOrderNote] = useState('');
@@ -133,7 +144,7 @@ export const CartPage: React.FC = () => {
                 </span>
               ) : (
                 <span>
-                  Add <strong className="text-terracotta">${remainingForFreeShipping.toFixed(2)}</strong> more to get <strong>FREE Shipping</strong>
+                  Add <strong className="text-terracotta">₹{remainingForFreeShipping.toFixed(2)}</strong> more to get <strong>FREE Shipping</strong>
                 </span>
               )}
             </span>
@@ -240,11 +251,11 @@ export const CartPage: React.FC = () => {
 
                       <div className="text-right">
                         <div className="text-base font-serif font-bold text-charcoal">
-                          ${item.totalPrice.toFixed(2)}
+                          ₹{item.totalPrice.toFixed(2)}
                         </div>
                         {item.quantity > 1 && (
                           <div className="text-[11px] text-charcoal/50">
-                            ${item.unitPrice.toFixed(2)} each
+                            ₹{item.unitPrice.toFixed(2)} each
                           </div>
                         )}
                       </div>
@@ -323,13 +334,13 @@ export const CartPage: React.FC = () => {
               <div className="space-y-3 pt-4 border-t border-stone-100 text-sm">
                 <div className="flex justify-between text-charcoal/80">
                   <span>Subtotal</span>
-                  <span className="font-semibold">${subtotal.toFixed(2)}</span>
+                  <span className="font-semibold">₹{subtotal.toFixed(2)}</span>
                 </div>
 
                 {couponDiscount > 0 && (
                   <div className="flex justify-between text-forest font-medium">
                     <span>Coupon Discount ({couponDiscount}%)</span>
-                    <span>-${discountAmount.toFixed(2)}</span>
+                    <span>-₹{discountAmount.toFixed(2)}</span>
                   </div>
                 )}
 
@@ -339,20 +350,20 @@ export const CartPage: React.FC = () => {
                     {shipping === 0 ? (
                       <span className="text-forest font-semibold">FREE</span>
                     ) : (
-                      `$${shipping.toFixed(2)}`
+                      `₹${shipping.toFixed(2)}`
                     )}
                   </span>
                 </div>
 
                 <div className="flex justify-between text-charcoal/80">
                   <span>Estimated Sales Tax</span>
-                  <span>${tax.toFixed(2)}</span>
+                  <span>₹{tax.toFixed(2)}</span>
                 </div>
 
                 <div className="flex justify-between items-baseline pt-4 border-t border-stone-200 text-charcoal">
                   <span className="font-serif font-bold text-lg">Total</span>
                   <span className="font-serif font-bold text-2xl text-terracotta">
-                    ${total.toFixed(2)}
+                    ₹{total.toFixed(2)}
                   </span>
                 </div>
               </div>
@@ -360,8 +371,8 @@ export const CartPage: React.FC = () => {
               {/* Primary CTA */}
               <button
                 type="button"
-                onClick={() => navigate('/checkout')}
-                className="w-full mt-6 py-4 rounded-2xl bg-terracotta text-white font-bold text-sm uppercase tracking-wider hover:bg-terracotta-dark shadow-md hover:shadow-lg transition-all active:scale-[0.99] flex items-center justify-center gap-2"
+                onClick={handleProceedToCheckout}
+                className="w-full mt-6 py-4 rounded-2xl bg-terracotta text-white font-bold text-sm uppercase tracking-wider hover:bg-terracotta-dark shadow-md hover:shadow-lg transition-all active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer"
               >
                 Proceed to Checkout <ArrowRight className="w-4 h-4" />
               </button>

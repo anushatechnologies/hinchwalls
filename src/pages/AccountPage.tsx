@@ -211,7 +211,7 @@ export const AccountPage: React.FC = () => {
 
                     <div className="flex items-center justify-between sm:justify-end gap-4">
                       <span className="font-serif font-bold text-charcoal text-base">
-                        ${ord.total.toFixed(2)}
+                        ₹{ord.total.toFixed(2)}
                       </span>
                       <Link
                         to={`/track-order?orderNumber=${encodeURIComponent(ord.orderNumber)}`}
