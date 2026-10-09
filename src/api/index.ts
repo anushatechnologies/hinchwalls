@@ -39,46 +39,53 @@ async function requestApi<T>(url: string, method = 'GET', body?: any, params?: R
 // ============================================================
 export const authApi = {
   /**
-   * POST /api/auth/login
-   * Returns { token, user }
+   * API 1: Check Phone
+   * GET /api/auth/check-phone?phone=%2B919876543210
    */
-  login: async (email: string, password: string): Promise<{ token: string; user: any }> => {
-    const res = await apiClient.post<any>('/auth/login', { email, password });
-    const data = res.data?.data || res.data;
-    return {
-      token: data?.token || data?.accessToken || '',
-      user: data?.user || data?.customer || data || {},
-    };
+  checkPhone: async (phone: string): Promise<{ exists: boolean }> => {
+    try {
+      const res = await apiClient.get<any>('/auth/check-phone', { params: { phone } });
+      const data = res.data?.data !== undefined ? res.data.data : res.data;
+      return { exists: Boolean(data?.exists) };
+    } catch {
+      return { exists: false };
+    }
   },
 
   /**
-   * POST /api/auth/register
+   * API 2: Synchronize User and Exchange Tokens
+   * POST /api/auth/sync
    */
-  register: async (data: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
+  sync: async (payload: {
+    firebaseIdToken: string;
+    name?: string;
     phone?: string;
-  }): Promise<{ token: string; user: any }> => {
-    const res = await apiClient.post<any>('/auth/register', data);
-    const resp = res.data?.data || res.data;
-    return {
-      token: resp?.token || resp?.accessToken || '',
-      user: resp?.user || resp?.customer || resp || {},
-    };
+    email?: string;
+  }): Promise<any> => {
+    const res = await apiClient.post<any>('/auth/sync', payload);
+    return res.data?.data !== undefined ? res.data.data : res.data;
   },
 
   /**
+   * API 3: Get Current Authenticated User Profile
    * GET /api/auth/me
-   * Get the authenticated user's profile
    */
   me: async (): Promise<any> => {
     const res = await apiClient.get<any>('/auth/me');
-    return res.data?.data || res.data;
+    return res.data?.data !== undefined ? res.data.data : res.data;
   },
 
   /**
+   * API 4: Session Refresh
+   * POST /api/auth/refresh-token
+   */
+  refreshToken: async (): Promise<any> => {
+    const res = await apiClient.post<any>('/auth/refresh-token');
+    return res.data?.data !== undefined ? res.data.data : res.data;
+  },
+
+  /**
+   * API 5: Logout
    * POST /api/auth/logout
    */
   logout: async (): Promise<void> => {
@@ -87,6 +94,42 @@ export const authApi = {
     } catch {
       // ignore logout errors
     }
+  },
+
+  /**
+   * API 6: Claim Admin
+   * POST /api/auth/claim-admin
+   */
+  claimAdmin: async (): Promise<any> => {
+    const res = await apiClient.post<any>('/auth/claim-admin');
+    return res.data?.data !== undefined ? res.data.data : res.data;
+  },
+
+  /**
+   * Legacy login & register wrappers redirecting through sync flow
+   */
+  login: async (email: string, password: string): Promise<{ token: string; user: any }> => {
+    const res = await apiClient.post<any>('/auth/login', { email, password });
+    const data = res.data?.data !== undefined ? res.data.data : res.data;
+    return {
+      token: data?.token || data?.accessToken || '',
+      user: data?.user || data?.customer || data || {},
+    };
+  },
+
+  register: async (data: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+    phone?: string;
+  }): Promise<{ token: string; user: any }> => {
+    const res = await apiClient.post<any>('/auth/register', data);
+    const resp = res.data?.data !== undefined ? res.data.data : res.data;
+    return {
+      token: resp?.token || resp?.accessToken || '',
+      user: resp?.user || resp?.customer || resp || {},
+    };
   },
 };
 

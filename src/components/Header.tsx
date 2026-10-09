@@ -7,8 +7,10 @@ import {
   X,
   Layers,
   Sparkles,
+  User,
 } from 'lucide-react';
 import { useCartStore } from '../store/cartStore';
+import { useAuthStore } from '../store/authStore';
 import { useDebounce } from '../hooks';
 import { productApi, categoryApi, subcategoryApi } from '../api';
 import type { Product, Category, SubcategoryCardItem } from '../types';
@@ -33,6 +35,7 @@ export default function Header() {
   const navigate = useNavigate();
   const location = useLocation();
   const cartStore = useCartStore();
+  const { user, isAuthenticated } = useAuthStore();
   const searchRef = useRef<HTMLDivElement>(null);
 
   const debouncedSearch = useDebounce(searchQuery, 300);
@@ -262,14 +265,39 @@ function getSubcategoryIconFallback(name: string): string {
               )}
             </div>
 
-            {/* Quick Actions (Catalog Link & Cart) */}
-            <div className="flex items-center gap-3">
+            {/* Quick Actions (Catalog Link, User & Cart) */}
+            <div className="flex items-center gap-2.5">
               <Link
                 to="/category/all"
-                className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-stone-100 hover:bg-orange-50 hover:text-orange-600 text-stone-800 text-xs font-bold transition-colors"
+                className="hidden lg:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-stone-100 hover:bg-orange-50 hover:text-orange-600 text-stone-800 text-xs font-bold transition-colors"
               >
-                <span>Browse All (62)</span>
+                <span>Browse All</span>
               </Link>
+
+              {/* User Account / Sign In */}
+              {isAuthenticated && user ? (
+                <Link
+                  to={user.role === 'ADMIN' ? '/admin' : user.role === 'SELLER' ? '/seller/dashboard' : '/account'}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-stone-100 hover:bg-orange-50 hover:text-orange-600 text-stone-800 text-xs font-bold transition-colors"
+                  title={`Signed in as ${user.name || user.email}`}
+                >
+                  <User size={15} />
+                  <span className="hidden sm:inline">{user.firstName || 'Account'}</span>
+                  {user.role && user.role !== 'CUSTOMER' && (
+                    <span className="text-[10px] bg-orange-600 text-white px-1.5 py-0.2 rounded-full font-mono uppercase">
+                      {user.role}
+                    </span>
+                  )}
+                </Link>
+              ) : (
+                <Link
+                  to="/login"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold shadow-xs transition-colors"
+                >
+                  <User size={14} />
+                  <span>Sign In</span>
+                </Link>
+              )}
 
               {/* Cart Drawer Toggle */}
               <button

@@ -75,17 +75,17 @@ export const AccountPage: React.FC = () => {
         {/* User Hero Banner */}
         <div className="mt-4 bg-white rounded-3xl p-6 sm:p-8 border border-stone-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-terracotta text-white font-serif font-bold text-2xl flex items-center justify-center shadow-md">
-              {user.firstName[0]}
-              {user.lastName[0]}
+            <div className="w-16 h-16 rounded-2xl bg-orange-600 text-white font-serif font-bold text-2xl flex items-center justify-center shadow-md">
+              {user.firstName ? user.firstName[0] : (user.name ? user.name[0] : 'U')}
+              {user.lastName ? user.lastName[0] : ''}
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-2xl font-serif font-bold text-charcoal">
-                  Hello, {user.firstName}!
+                <h1 className="text-2xl font-serif font-bold text-stone-900">
+                  Hello, {user.firstName || user.name || 'Member'}!
                 </h1>
-                <span className="text-xs bg-forest/10 text-forest font-semibold px-2 py-0.5 rounded-full">
-                  WallArt VIP
+                <span className="text-xs bg-orange-100 text-orange-700 font-bold px-2.5 py-0.5 rounded-full uppercase">
+                  {user.role || 'CUSTOMER'}
                 </span>
               </div>
               <p className="text-xs text-charcoal/60 mt-0.5">{user.email}</p>

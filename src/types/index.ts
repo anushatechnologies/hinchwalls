@@ -341,13 +341,52 @@ export interface OrderItem {
 // ============================================================
 // Customer / User Types
 // ============================================================
-export interface Customer {
+export type UserRole = 'CUSTOMER' | 'SELLER' | 'ADMIN';
+
+export interface BackendUser {
+  userId: number | string;
+  firebaseUid: string;
+  email: string | null;
+  name: string | null;
+  phone: string | null;
+  role: UserRole;
+  sellerId: number | string | null;
+  isProfileComplete: boolean;
+}
+
+export interface SyncResponseData {
+  accessToken: string;
+  tokenType?: string;
+  expiresIn?: number;
+  userId: number | string;
+  firebaseUid: string;
+  email: string | null;
+  name: string | null;
+  phone: string | null;
+  role: UserRole;
+  sellerId: number | string | null;
+  isProfileComplete: boolean;
+}
+
+export interface SyncRequest {
+  firebaseIdToken: string;
+  name?: string;
+  phone?: string;
+  email?: string;
+}
+
+export interface CheckPhoneResponse {
+  exists: boolean;
+}
+
+export interface Customer extends Partial<BackendUser> {
   id: string;
   firstName: string;
   lastName: string;
   email: string;
   phone?: string;
   avatar?: string;
+  role?: UserRole;
   addresses: Address[];
   orderCount: number;
   totalSpent: number;

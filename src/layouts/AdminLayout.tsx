@@ -11,9 +11,11 @@ import {
   ExternalLink,
   ShieldCheck
 } from 'lucide-react';
+import { useAuthStore } from '../store/authStore';
 
 export const AdminLayout: React.FC = () => {
   const location = useLocation();
+  const { user } = useAuthStore();
 
   const navLinks = [
     { label: 'Overview', href: '/admin', icon: LayoutDashboard },
@@ -87,12 +89,18 @@ export const AdminLayout: React.FC = () => {
             <Link
               to="/shop"
               target="_blank"
-              className="text-xs font-semibold text-charcoal/70 hover:text-terracotta flex items-center gap-1"
+              className="text-xs font-semibold text-stone-600 hover:text-orange-600 flex items-center gap-1"
             >
               View Live Site <ExternalLink className="w-3 h-3" />
             </Link>
-            <div className="w-8 h-8 rounded-full bg-stone-900 text-white flex items-center justify-center font-bold text-xs">
-              AD
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-orange-600 text-white flex items-center justify-center font-bold text-xs uppercase shadow-xs">
+                {user?.name ? user.name.slice(0, 2).toUpperCase() : 'AD'}
+              </div>
+              <div className="hidden sm:block text-left">
+                <p className="text-xs font-bold text-stone-900 leading-none">{user?.name || 'Administrator'}</p>
+                <p className="text-[10px] text-stone-500 font-mono mt-0.5">{user?.role || 'ADMIN'}</p>
+              </div>
             </div>
           </div>
         </header>
